@@ -3,3 +3,5 @@
 (Or well, packages that support one particular self-hosted TinaCMS installation, and which you are, in turn, welcome to reuse in your own projects.)
 
 Refer to [tina-true-selfhosted-example](https://github.com/bojidar-bg/tina-true-selfhosted-example) for more explanation.
+
+This repository's structure has been partially inspired by [`bakeruk/modern-typescript-monorepo-example`](https://github.com/bakeruk/modern-typescript-monorepo-example).
