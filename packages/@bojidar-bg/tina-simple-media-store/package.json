@@ -9,8 +9,7 @@
     "prepack": "tsc -p tsconfig.build.json"
   },
   "keywords": [
-    "tinacms",
-    "simple-git"
+    "tinacms"
   ],
   "packageManager": "pnpm@10.18.1",
   "dependencies": {
