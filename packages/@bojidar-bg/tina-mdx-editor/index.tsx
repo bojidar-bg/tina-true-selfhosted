@@ -2,7 +2,7 @@ import { ReactNode, useRef } from 'react';
 import { BlockTypeSelect, BoldItalicUnderlineToggles, Button, CreateLink, DiffSourceToggleWrapper, InsertThematicBreak, ListsToggle, MDXEditor, RealmPlugin, UndoRedo, diffSourcePlugin, headingsPlugin, iconComponentFor$, imagePlugin, insertImage$, linkDialogPlugin, linkPlugin, listsPlugin, quotePlugin, thematicBreakPlugin, toolbarPlugin, useCellValues, usePublisher } from '@mdxeditor/editor';
 
 import '@mdxeditor/editor/style.css';
-import './style.css';
+import '@bojidar-bg/tina-mdx-editor/style.css';
 
 import { useCMS } from 'tinacms';
 
