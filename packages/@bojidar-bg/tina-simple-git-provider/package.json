@@ -1,5 +1,5 @@
 {
-  "name": "tina-simple-git-provider",
+  "name": "@bojidar-bg/tina-simple-git-provider",
   "version": "0.1.0",
   "description": "An GitProvider for TinaCMS built on top of simple-git.",
   "author": "Bojidar Marinov <bojidar.marinov.bg@gmail.com>",

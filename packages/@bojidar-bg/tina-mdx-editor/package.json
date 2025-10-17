@@ -1,5 +1,5 @@
 {
-  "name": "tina-mdx-editor",
+  "name": "@bojidar-bg/tina-mdx-editor",
   "version": "0.1.0",
   "description": "An alternative markdown editor for TinaCMS built on top of MDXEditor",
   "author": "Bojidar Marinov <bojidar.marinov.bg@gmail.com>",
