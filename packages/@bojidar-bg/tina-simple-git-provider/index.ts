@@ -1,6 +1,6 @@
+import path from 'node:path'
 import { GitProvider } from '@tinacms/datalayer'
 import { mkdir, outputFile, remove } from 'fs-extra'
-import path from 'node:path'
 import { CloneOptions, SimpleGit, SimpleGitOptions, simpleGit } from 'simple-git'
 
 export interface SimpleGitProviderOptions {
@@ -41,7 +41,7 @@ export class SimpleGitProvider implements GitProvider {
   }
   
   private async init(): Promise<void> {
-    let simpleGitOptions = Object.assign({
+    const simpleGitOptions = Object.assign({
       baseDir: this.options.repoDir
     }, this.options.simpleGit)
     
@@ -62,13 +62,23 @@ export class SimpleGitProvider implements GitProvider {
     if (this.options.pullRepo ?? true) {
       this.gitClient.pull();
     }
+    
+    this.makeCommit = async (file) => {
+      await this.gitClient.add([file])
+      await this.gitClient.commit(this.commitMessage(file), [file])
+      if (this.options.pushRepo ?? true) {
+        await this.gitClient.push()
+      }
+    }
   }
+  
+  public makeCommit: (file: string) => Promise<void>;
   
   async onPut(key: string, value: string): Promise<void> {
     // Make sure init() completed
     await this.initPromise
     // Modify file locally
-    let filePath = path.join(this.options.repoDir, key)
+    const filePath = path.join(this.options.repoDir, key)
     await outputFile(filePath, value, this.encoding)
     // Commit the changed file
     await this.makeCommit(key)
@@ -78,17 +88,9 @@ export class SimpleGitProvider implements GitProvider {
     // Make sure init() completed
     await this.initPromise
     // Modify file locally
-    let filePath = path.join(this.options.repoDir, key)
+    const filePath = path.join(this.options.repoDir, key)
     await remove(filePath)
     // Commit the changed file
     await this.makeCommit(key)
-  }
-  
-  async makeCommit(file: string): Promise<void> {
-    await this.gitClient.add([file])
-    await this.gitClient.commit(this.commitMessage(file), [file])
-    if (this.options.pushRepo ?? true) {
-      await this.gitClient.push()
-    }
   }
 }

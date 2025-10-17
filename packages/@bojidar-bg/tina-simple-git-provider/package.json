@@ -1,0 +1,22 @@
+{
+  "name": "tina-simple-git-provider",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepack": "tsc -p tsconfig.build.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.1",
+  "dependencies": {
+    "@tinacms/datalayer": "^1.4.1",
+    "fs-extra": "^11.3.2",
+    "simple-git": "^3.28.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/readable-stream": "^4.0.21"
+  }
+}

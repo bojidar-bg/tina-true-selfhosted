@@ -1,0 +1,22 @@
+{
+  "name": "tina-mdx-editor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dummy.tsx",
+  "browser": "index.tsx",
+  "scripts": {
+    "prepack": "tsc -p tsconfig.build.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.1",
+  "dependencies": {
+    "@mdxeditor/editor": "^3.47.0",
+    "react": "^18.3.1",
+    "tinacms": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2"
+  }
+}

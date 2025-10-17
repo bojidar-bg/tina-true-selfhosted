@@ -1,19 +1,23 @@
-import { DEFAULT_MEDIA_UPLOAD_TYPES, MediaStore, MediaUploadOptions, Media, MediaListOptions, MediaList, TinaCMS, MediaStoreClass, Client } from 'tinacms'
+import { DEFAULT_MEDIA_UPLOAD_TYPES, MediaStore, MediaUploadOptions, Media, MediaListOptions, MediaList, Client } from 'tinacms'
 
-export interface BetterMediaStoreConfig {
+export interface SimpleMediaStoreConfig {
   mediaStoreOptions?: {
+    /// The API at which media files can be modified/uploaded/etc.
+    /// Defaults to "/api/media"
     mediaApiUrl?: string
+    /// The path under which uploaded media will appear
+    /// Defaults to "/"
     mediaRoot?: string
   }
 }
-/// A slightly-improved version of [TinaMediaStore], for use in self-hosted deployments
+/// A slightly-improved version of 'tinacms'.TinaMediaStore, for use in self-hosted deployments
 /// Main improvement is the ability to specify a custom url through config.mediaStoreOptions.mediaApiUrl
-export class BetterMediaStore implements MediaStore {
+export class SimpleMediaStore implements MediaStore {
   private url: string;
   private mediaRoot: string;
 
   constructor(cms: Client) {
-    let config = cms.schema?.config?.config as BetterMediaStoreConfig | undefined;
+    const config = cms.schema?.config?.config as SimpleMediaStoreConfig | undefined;
     this.url = config?.mediaStoreOptions?.mediaApiUrl ?? '/api/media';
     this.mediaRoot = config?.mediaStoreOptions?.mediaRoot ?? '/';
     this.mediaRoot = this.mediaRoot.replace(/^\/?/, '/').replace(/\/?$/, '/')
@@ -24,7 +28,7 @@ export class BetterMediaStore implements MediaStore {
   }
 
   accept = DEFAULT_MEDIA_UPLOAD_TYPES;
-  maxSize = 100 * 1024 * 1024; // *Who knows what nginx would let pass...*
+  maxSize = 100 * 1024 * 1024;
 
   async persist(media: MediaUploadOptions[]): Promise<Media[]> {
     // Mostly copied from TinaMediaStore.persist_local, with light changes around this.mediaRoot
@@ -93,7 +97,7 @@ export class BetterMediaStore implements MediaStore {
   }
 
   async list(options: MediaListOptions): Promise<MediaList> {
-    let res = await fetch(
+    const res = await fetch(
       `${this.url}/list/${options.directory || ''}?limit=${
         options.limit || 20
       }${options.offset ? `&cursor=${options.offset}` : ''}`
@@ -131,7 +135,7 @@ export class BetterMediaStore implements MediaStore {
         thumbnails: options.thumbnailSizes?.reduce((acc, { w, h }) => {
           acc[`${w}x${h}`] = file.src;
           return acc;
-        }, {}),
+        }, {} as {[name: string]: string}),
       });
     }
 

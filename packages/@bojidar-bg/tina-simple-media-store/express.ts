@@ -1,14 +1,18 @@
 import fs from 'fs-extra';
-import path from 'path';
-import express from 'express';
+import path from 'node:path';
+import express, {Express} from 'express';
 import busboy from 'busboy';
-import { SimpleGitProvider } from './simple-git-provider';
-import { WriteStream } from 'fs';
+import { WriteStream } from 'node:fs';
 
 // Copied wholesale from @tinacms/cli/src/next/commands/dev-command/server/media.ts
-// then modified to use express and to use onModifyFile / uploadMediaStream for syncronising changes with git
+// then modified to use express and to use onModifyFile / uploadMediaStream for synchronising changes with git
 
-export const BetterMediaRouter = (config: PathConfig, onModifyFile?: (path: string) => Promise<void>) => {
+/// SimpleMediaRouter is a express-based backend compatible with SimpleMediaStore
+/// and designed for use with SimpleGitProvider.
+/// It should be mounted at config.mediaStoreOptions.mediaApiUrl, which defaults to "/api/media"
+/// with e.g. rootExpressApp.use("/api/media", SimpleMediaRouter(...))
+/// Make sure to register it before TinaCMS's TinaNodeBackend on "/api"
+export const SimpleMediaRouter = (config: PathConfig, onModifyFile?: (path: string) => Promise<void>): Express => {
   const mediaRouter = express()
   
   const mediaModel = new MediaModel(config, onModifyFile);
@@ -59,12 +63,22 @@ export const BetterMediaRouter = (config: PathConfig, onModifyFile?: (path: stri
   return mediaRouter;
 };
 
-export const parseMediaFolder = (str: string) => {
+/// Configuration for SimpleMediaRouter's paths
+export interface PathConfig {
+  /// Path to the root of the repository
+  rootPath: string;
+  /// Path from the root of the repository to the public folder of static files, should match config.build.publicFolder
+  publicFolder: string;
+  /// Path from the public folder to the media folder, should match config.mediaStoreOptions.mediaRoot
+  mediaRoot: string;
+}
+
+const parseMediaFolder = (str: string): string => {
   let returnString = str;
-  if (returnString.startsWith('/')) returnString = returnString.substr(1);
+  if (returnString.startsWith('/')) returnString = returnString.substring(1);
 
   if (returnString.endsWith('/'))
-    returnString = returnString.substr(0, returnString.length - 1);
+    returnString = returnString.substring(0, returnString.length - 1);
 
   return returnString;
 };
@@ -92,11 +106,6 @@ interface ListMediaRes {
   files: File[];
   cursor?: string;
   error?: string;
-}
-export interface PathConfig {
-  rootPath: string;
-  publicFolder: string;
-  mediaRoot: string;
 }
 
 type SuccessRecord = { ok: true } | { ok: false; message: string };
@@ -231,7 +240,7 @@ export class MediaModel {
     );
     // make sure the directory exists before writing the file. This is needed for creating new folders
     await fs.ensureDir(path.dirname(file));
-    let result = fs.createWriteStream(file)
+    const result = fs.createWriteStream(file)
     
     result.on('close', async () => {
       try {
@@ -244,3 +253,5 @@ export class MediaModel {
     return result
   }
 }
+
+export default SimpleMediaRouter;

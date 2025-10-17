@@ -1,0 +1,25 @@
+{
+  "name": "tina-simple-media-store",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepack": "tsc -p tsconfig.build.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.1",
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "express": "^4.21.2",
+    "fs-extra": "^11.3.2",
+    "tinacms": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/busboy": "^1.5.4",
+    "@types/express": "^5.0.3",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^24.1.0"
+  }
+}
