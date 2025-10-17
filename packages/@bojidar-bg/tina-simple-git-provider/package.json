@@ -5,6 +5,7 @@
   "author": "Bojidar Marinov <bojidar.marinov.bg@gmail.com>",
   "license": "Apache-2.0",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "prepack": "tsc -p tsconfig.build.json"
   },

@@ -29,5 +29,9 @@
   "exports": {
     ".": "./dist/index.js",
     "./express": "./dist/express.js"
+  },
+  "types":  {
+    ".": "./dist/index.d.ts",
+    "./express": "./dist/express.d.ts"
   }
 }
