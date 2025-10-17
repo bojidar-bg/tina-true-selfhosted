@@ -1,14 +1,14 @@
 {
   "name": "tina-simple-git-provider",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "An GitProvider for TinaCMS built on top of simple-git.",
+  "author": "Bojidar Marinov <bojidar.marinov.bg@gmail.com>",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
   "scripts": {
     "prepack": "tsc -p tsconfig.build.json"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["tinacms", "simple-git"],
   "packageManager": "pnpm@10.18.1",
   "dependencies": {
     "@tinacms/datalayer": "^1.4.1",

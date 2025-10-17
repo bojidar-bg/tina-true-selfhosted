@@ -3,19 +3,50 @@ import path from 'node:path';
 import express, {Express} from 'express';
 import busboy from 'busboy';
 import { WriteStream } from 'node:fs';
+import type { BackendAuthProvider } from '@tinacms/datalayer';
 
 // Copied wholesale from @tinacms/cli/src/next/commands/dev-command/server/media.ts
-// then modified to use express and to use onModifyFile / uploadMediaStream for synchronising changes with git
+// then modified to use express, authProvider, and onModifyFile / uploadMediaStream for synchronising changes with git
 
-/// SimpleMediaRouter is a express-based backend compatible with SimpleMediaStore
+/// Configuration for SimpleMediaHandler
+export interface SimpleMediaHandlerOptions {
+  /// Provider used for authenticating requests to the Media API
+  authProvider: BackendAuthProvider,
+  /// Paths used by the PathConfig
+  paths: PathConfig,
+  /// Callback called whenever the SimpleMediaHandler modifies a file
+  onModifyFile?: (path: string) => Promise<void>
+}
+
+/// Configuration for SimpleMediaHandler's paths
+export interface PathConfig {
+  /// Path to the root of the repository
+  rootPath: string;
+  /// Path from the root of the repository to the public folder of static files, should match config.build.publicFolder
+  publicFolder: string;
+  /// Path from the public folder to the media folder, should match config.mediaStoreOptions.mediaRoot
+  mediaRoot: string;
+}
+
+/// SimpleMediaHandler is a express-based backend compatible with SimpleMediaStore
 /// and designed for use with SimpleGitProvider.
 /// It should be mounted at config.mediaStoreOptions.mediaApiUrl, which defaults to "/api/media"
-/// with e.g. rootExpressApp.use("/api/media", SimpleMediaRouter(...))
+/// with e.g. rootExpressApp.use("/api/media", SimpleMediaHandler(...))
 /// Make sure to register it before TinaCMS's TinaNodeBackend on "/api"
-export const SimpleMediaRouter = (config: PathConfig, onModifyFile?: (path: string) => Promise<void>): Express => {
+export const SimpleMediaHandler = ({authProvider, paths, onModifyFile}: SimpleMediaHandlerOptions): Express => {
   const mediaRouter = express()
   
-  const mediaModel = new MediaModel(config, onModifyFile);
+  mediaRouter.use(async (req, res, next) => {
+    let result = await authProvider.isAuthorized(req, res);
+    if (result.isAuthorized) {
+      next();
+    } else {
+      res.status(403);
+      res.send(result);
+    }
+  });
+  
+  const mediaModel = new MediaModel(paths, onModifyFile);
 
   mediaRouter.use('/list/', async (req, res, next) => {
     if (req.method != 'GET') return next()
@@ -62,16 +93,6 @@ export const SimpleMediaRouter = (config: PathConfig, onModifyFile?: (path: stri
 
   return mediaRouter;
 };
-
-/// Configuration for SimpleMediaRouter's paths
-export interface PathConfig {
-  /// Path to the root of the repository
-  rootPath: string;
-  /// Path from the root of the repository to the public folder of static files, should match config.build.publicFolder
-  publicFolder: string;
-  /// Path from the public folder to the media folder, should match config.mediaStoreOptions.mediaRoot
-  mediaRoot: string;
-}
 
 const parseMediaFolder = (str: string): string => {
   let returnString = str;
@@ -254,4 +275,4 @@ export class MediaModel {
   }
 }
 
-export default SimpleMediaRouter;
+export default SimpleMediaHandler;

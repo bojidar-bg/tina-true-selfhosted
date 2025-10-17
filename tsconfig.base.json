@@ -18,6 +18,10 @@
     "emitDecoratorMetadata": false,
     
     "esModuleInterop": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    
+    "target": "es6",
+    "module": "esnext",
+    "moduleResolution": "bundler",
   },
 }

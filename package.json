@@ -1,10 +1,10 @@
 {
   "name": "tina-true-selfhosted-monorepo",
-  "version": "1.0.0",
+  "version": "0.0.0",
+  "private": true,
   "description": "A real example of self-hosting tina, without cloud offerings.",
   "author": "Bojidar Marinov <bojidar.marinov.bg@gmail.com>",
   "license": "Apache-2.0",
-  "private": true,
   "packageManager": "pnpm@10.18.1",
   "scripts": {
     "lint": "eslint",

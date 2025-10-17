@@ -1,14 +1,17 @@
 {
   "name": "tina-simple-media-store",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "An alternative MediaStore for TinaCMS with better support for self-hosted installations.",
+  "author": "Bojidar Marinov <bojidar.marinov.bg@gmail.com>",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
   "scripts": {
     "prepack": "tsc -p tsconfig.build.json"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "tinacms",
+    "simple-git"
+  ],
   "packageManager": "pnpm@10.18.1",
   "dependencies": {
     "busboy": "^1.6.0",
@@ -17,9 +20,14 @@
     "tinacms": "^2.9.0"
   },
   "devDependencies": {
+    "@tinacms/datalayer": "^1.4.1",
     "@types/busboy": "^1.5.4",
     "@types/express": "^5.0.3",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.1.0"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./express": "./dist/express.js"
   }
 }

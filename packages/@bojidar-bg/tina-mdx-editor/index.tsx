@@ -6,7 +6,7 @@ import '@bojidar-bg/tina-mdx-editor/style.css';
 
 import { useCMS } from 'tinacms';
 
-type MDXEditorFieldProps = {
+export interface MDXEditorFieldProps {
   /// Input values, as passed by TinaCMS
   input: {
     value: string,
@@ -18,37 +18,36 @@ type MDXEditorFieldProps = {
   },
   /// List of plugins for the MDXEditor
   /// Defaults to toolbarPlugin, headingsPlugin, quotePlugin, listsPlugin, thematicBreakPlugin, linkPlugin, linkDialogPlugin, imagePlugin (with resize on), and diffSourcePlugin.
-  plugins?: (opts: {meta: {initial?: string}}) => RealmPlugin[],
+  plugins?: (opts: {meta: {initial?: string}, toolbarContents: () => ReactNode}) => RealmPlugin[],
   /// Contents for the toolbarPlugin
   /// Defaults to UndoRedo and a DiffSourceToggleWrapper holding BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink, [InsertTinaImage], ListsToggle (without checkbox lists), and InsertThematicBreak.
   toolbarContents?: () => ReactNode
 }
-  
+
 export function MDXEditorField({input, meta, plugins, toolbarContents}: MDXEditorFieldProps) {
   const overlay = useRef(null);
+  toolbarContents = toolbarContents || (() => <>
+    <UndoRedo />
+    <DiffSourceToggleWrapper>
+      <BlockTypeSelect />
+      <BoldItalicUnderlineToggles />
+      <CreateLink />
+      <InsertTinaImage />
+      <ListsToggle options={['bullet', 'number']} />
+      <InsertThematicBreak />
+    </DiffSourceToggleWrapper>
+  </>);
   return <>
     {overlay.current && <MDXEditor
       overlayContainer={overlay.current}
       markdown={input.value}
-      plugins={plugins ? plugins({meta}) : [
+      plugins={plugins ? plugins({meta, toolbarContents}) : [
         headingsPlugin(),
         quotePlugin(),
         listsPlugin(),
         thematicBreakPlugin(),
         toolbarPlugin({
-          toolbarContents: toolbarContents || (() => (
-            <>
-              <UndoRedo />
-              <DiffSourceToggleWrapper>
-                <BlockTypeSelect />
-                <BoldItalicUnderlineToggles />
-                <CreateLink />
-                <InsertTinaImage />
-                <ListsToggle options={['bullet', 'number']} />
-                <InsertThematicBreak />
-              </DiffSourceToggleWrapper>
-            </>
-          ))
+          toolbarContents
         }),
         linkPlugin(),
         linkDialogPlugin(),
@@ -83,6 +82,5 @@ export function InsertTinaImage() {
       {iconComponentFor("add_photo")}
     </Button>);
 }
-
 
 export default MDXEditorField;

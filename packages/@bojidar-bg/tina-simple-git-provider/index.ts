@@ -4,9 +4,8 @@ import { mkdir, outputFile, remove } from 'fs-extra'
 import { CloneOptions, SimpleGit, SimpleGitOptions, simpleGit } from 'simple-git'
 
 export interface SimpleGitProviderOptions {
-  /// Directory to a local clone of the repository, dedicated for editing. Required.
+  /// Path to a local clone of the repository, dedicated for editing. Required.
   repoDir: string
-  
   /// If set, configures how to clone the repository
   cloneRepo?: {
     remote: string,
