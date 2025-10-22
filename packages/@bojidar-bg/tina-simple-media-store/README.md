@@ -29,20 +29,26 @@ export default defineConfig({
     /// The URL to the media API backend.
     mediaApiUrl: "/api/media",
     // mediaApiUrl: "https://my-tina-api.my-site.example/api/media",
-    /// The path from the root of your website to where media files can be found
-    mediaRoot: "/"
+    
+    /// The file path from the root of your website's repository to where media files can be found
+    mediaRoot: "/",
+    
+    /// Web address under which media thumbnails can be accessed
+    thumbnailBasePath: "/" // Defaults to config.build.basePath
+    
+    /// An image `img.png` uploaded in folder `dir`, would be referenced as `/mediaRoot/dir/img.png` in the Tina editor, and displayed as a thumbnail from `/thumbnailBasePath/mediaRoot/dir/img.png`
   },
 });
 ```
 
 ### Server-side part / backend API
 
-The server-side handler, `SimpleMediaRouter`, expects to be registered under `/api/media` using Express.js, before TinaCMS's `TinaNodeBackend` gets registered.
-If you have a setup similar to the [tina-true-selfhosted-example](https://github.com/bojidar-bg/tina-true-selfhosted-example), you can modify your `tina/handler.ts` to include the `SimpleMediaRouter` like so:
+The server-side handler, `SimpleMediaHandler`, expects to be registered under `/api/media` using Express.js, before TinaCMS's `TinaNodeBackend` gets registered.
+If you have a setup similar to the [tina-true-selfhosted-example](https://github.com/bojidar-bg/tina-true-selfhosted-example), you can modify your `tina/handler.ts` to include the `SimpleMediaHandler` like so:
 
 ```ts
 import { TinaNodeBackend } from '@tinacms/datalayer'
-import { SimpleMediaRouter } from '@bojidar-bg/tina-simple-media-store/express'
+import { SimpleMediaHandler } from '@bojidar-bg/tina-simple-media-store/express'
 
 import { config } from './config'
 // import { gitProvider } from './database' // For the SimpleGitProvider integration
@@ -59,7 +65,7 @@ const tinaHandler = TinaNodeBackend({
   }
 })
 
-const mediaHandler = SimpleMediaRouter({
+const mediaHandler = SimpleMediaHandler({
   authProvider, // An AuthProvider for authenticating media API usage
   paths: {
     // Paths to control where media files should be stored
@@ -85,7 +91,7 @@ export default function createApp() {
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
   
-  // Important: Include the SimpleMediaRouter before Tina's NodeBackend
+  // Important: Include the SimpleMediaHandler before Tina's NodeBackend
   app.use('/api/media/', mediaHandler)
   app.use('/api/', tinaHandler)
   
@@ -93,8 +99,10 @@ export default function createApp() {
 };
 ```
 
-Currently, there is no Next.js implementation of the `SimpleMediaRouter`--you might be able to integrate the Express.js code with your Next.js application, but the author of this package has not used Next.js enough to know exactly how. Contributions and examples welcome!
+Currently, there is no Next.js implementation of the `SimpleMediaHandler`--you might be able to integrate the Express.js code with your Next.js application, but the author of this package has not used Next.js enough to know exactly how. Contributions and examples welcome!
 
 ## Credits
 
 This package was initially created as part of [tina-true-selfhosted-example](https://github.com/bojidar-bg/tina-true-selfhosted-example).
+
+Most of the code for this package came directly [from the `@tinacms/cli` package](https://github.com/tinacms/tinacms/blob/455a033104100ef627871606bd59b7c6b3d9d016/packages/%40tinacms/cli/src/next/commands/dev-command/server/media.ts).

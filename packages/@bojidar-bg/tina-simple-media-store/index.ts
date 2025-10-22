@@ -1,13 +1,16 @@
-import { DEFAULT_MEDIA_UPLOAD_TYPES, MediaStore, MediaUploadOptions, Media, MediaListOptions, MediaList, Client } from 'tinacms'
+import { DEFAULT_MEDIA_UPLOAD_TYPES, MediaStore, MediaUploadOptions, Media, MediaListOptions, MediaList, Client, Config } from 'tinacms'
 
 export interface SimpleMediaStoreConfig {
   mediaStoreOptions?: {
     /// The API at which media files can be modified/uploaded/etc.
     /// Defaults to "/api/media"
     mediaApiUrl?: string
-    /// The path under which uploaded media will appear
+    /// The path in the repository under which uploaded media will appear
     /// Defaults to "/"
     mediaRoot?: string
+    /// Publicly-accessible path/url under which thumbnails can be found
+    /// Defaults to config.build.basePath
+    thumbnailBasePath?: string
   }
 }
 /// A slightly-improved version of 'tinacms'.TinaMediaStore, for use in self-hosted deployments
@@ -15,12 +18,14 @@ export interface SimpleMediaStoreConfig {
 export class SimpleMediaStore implements MediaStore {
   private url: string;
   private mediaRoot: string;
+  private thumbnailBasePath: string;
 
   constructor(cms: Client) {
-    const config = cms.schema?.config?.config as SimpleMediaStoreConfig | undefined;
+    const config = cms.schema?.config?.config as Config & SimpleMediaStoreConfig | undefined;
     this.url = config?.mediaStoreOptions?.mediaApiUrl ?? '/api/media';
     this.mediaRoot = config?.mediaStoreOptions?.mediaRoot ?? '/';
     this.mediaRoot = this.mediaRoot.replace(/^\/?/, '/').replace(/\/?$/, '/')
+    this.thumbnailBasePath = config?.mediaStoreOptions?.thumbnailBasePath ?? config?.build.basePath ?? '/';
   }
   
   get isStatic() {
@@ -81,12 +86,11 @@ export class SimpleMediaStore implements MediaStore {
           directory,
           src: filePath,
           thumbnails: {
-            '75x75': filePath,
-            '400x400': filePath,
-            '1000x1000': filePath,
+            '75x75': this.thumbnailBasePath + filePath,
+            '400x400': this.thumbnailBasePath + filePath,
+            '1000x1000': this.thumbnailBasePath + filePath,
           },
         };
-        console.log(parsedRes)
 
         newFiles.push(parsedRes);
       } else {
@@ -133,7 +137,7 @@ export class SimpleMediaStore implements MediaStore {
         filename: file.filename,
         src: file.src,
         thumbnails: options.thumbnailSizes?.reduce((acc, { w, h }) => {
-          acc[`${w}x${h}`] = file.src;
+          acc[`${w}x${h}`] = this.thumbnailBasePath + file.src;
           return acc;
         }, {} as {[name: string]: string}),
       });
@@ -153,4 +157,8 @@ export class SimpleMediaStore implements MediaStore {
       method: 'DELETE',
     });
   }
+
+  parse = (media: Media) => {
+    return media.src;
+  };
 }
