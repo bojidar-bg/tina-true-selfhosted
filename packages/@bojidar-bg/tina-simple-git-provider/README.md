@@ -50,3 +50,5 @@ export default createDatabase({
 ## Credits
 
 This package was initially created as part of [tina-true-selfhosted-example](https://github.com/bojidar-bg/tina-true-selfhosted-example).
+
+[`simple-git`](https://www.npmjs.com/package/simple-git) is awesome!
