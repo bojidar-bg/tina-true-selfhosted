@@ -53,7 +53,7 @@ export function MDXEditorField({input, meta, plugins, toolbarContents}: MDXEdito
         linkDialogPlugin(),
         imagePlugin({
           imageUploadHandler: null,
-          allowSetImageDimensions: true
+          allowSetImageDimensions: true,
         }),
         diffSourcePlugin({
           diffMarkdown: meta.initial
