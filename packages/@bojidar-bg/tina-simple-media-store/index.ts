@@ -6,7 +6,7 @@ export interface SimpleMediaStoreConfig {
     /// Defaults to "/api/media"
     mediaApiUrl?: string
     /// The path in the repository under which uploaded media will appear
-    /// Defaults to "/"
+    /// Defaults to ""
     mediaRoot?: string
     /// Publicly-accessible path/url under which thumbnails can be found
     /// Defaults to config.build.basePath
@@ -25,7 +25,7 @@ export class SimpleMediaStore implements MediaStore {
     this.url = config?.mediaStoreOptions?.mediaApiUrl ?? '/api/media';
     this.mediaRoot = config?.mediaStoreOptions?.mediaRoot ?? '/';
     this.mediaRoot = this.mediaRoot.replace(/^\/?/, '/').replace(/\/?$/, '/')
-    this.thumbnailBasePath = config?.mediaStoreOptions?.thumbnailBasePath ?? config?.build.basePath ?? '/';
+    this.thumbnailBasePath = config?.mediaStoreOptions?.thumbnailBasePath ?? config?.build.basePath ?? '';
   }
   
   get isStatic() {

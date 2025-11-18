@@ -34,7 +34,7 @@ export default defineConfig({
     mediaRoot: "/",
     
     /// Web address under which media thumbnails can be accessed
-    thumbnailBasePath: "/" // Defaults to config.build.basePath
+    thumbnailBasePath: "" // Defaults to config.build.basePath
     
     /// An image `img.png` uploaded in folder `dir`, would be referenced as `/mediaRoot/dir/img.png` in the Tina editor, and displayed as a thumbnail from `/thumbnailBasePath/mediaRoot/dir/img.png`
   },
