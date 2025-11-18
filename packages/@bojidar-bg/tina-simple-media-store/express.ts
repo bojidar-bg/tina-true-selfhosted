@@ -37,7 +37,7 @@ export const SimpleMediaHandler = ({authProvider, paths, onModifyFile}: SimpleMe
   const mediaRouter = express()
   
   mediaRouter.use(async (req, res, next) => {
-    let result = await authProvider.isAuthorized(req, res);
+    const result = await authProvider.isAuthorized(req, res);
     if (result.isAuthorized) {
       next();
     } else {
